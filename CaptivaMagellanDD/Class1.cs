@@ -26,7 +26,8 @@ namespace Custom.InputAccel.UimScript
     public class ScriptIris : UimScriptDocument
     {
         public static string MDDurl = "http://magellandd:8110/restapi/rest";
-        
+        //Declaare a string to save the Decision Tree
+        public string DTJSON = "";
 
         /// <summary>
         /// Executes when the Document is first loaded for the task by the Completion module, 
@@ -37,6 +38,7 @@ namespace Custom.InputAccel.UimScript
         {
             //First of all, get the documenttype name
             string DocType = dataContext.DocumentName;
+            //Create a string to save the Decision Tree ID
             string TreeID = "";
             //Now query the Magellan DD web service to get a list of all of the folders and objects in the root
             string MDDFold = MDDurl + "/folders/id?username=Administrator&password=PASSWORD&folderID=1";
@@ -96,6 +98,7 @@ namespace Custom.InputAccel.UimScript
             string MDDDT = MDDurl + "/analysis/id?username=Administrator&password=PASSWORD&repository=DEMO&analysisID=" + TreeID + "&pageNumber=1";
             HttpWebRequest DTRequest = (HttpWebRequest)WebRequest.Create(MDDDT);
             DTRequest.Method = "POST";
+            //Declaare a string to save the Decision Tree
             //Now get the response back
             using (HttpWebResponse response = (HttpWebResponse)DTRequest.GetResponse())
             {
@@ -105,13 +108,14 @@ namespace Custom.InputAccel.UimScript
                     using (StreamReader myStreamReader = new StreamReader(responseStream, Encoding.UTF8))
                     {
                         string responseJSON = myStreamReader.ReadToEnd();
-
-                        // Assuming the response is in JSON format, deserialize it
-                        // creating an instance of TData type (generic type declared before).
-                        dynamic res = JsonConvert.DeserializeObject(responseJSON);
+                        DTJSON = responseJSON;
+                        //save the result
+                        
                     }
                 }
             }
+
+           
         }
 
         /// <summary>
