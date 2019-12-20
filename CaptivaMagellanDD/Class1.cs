@@ -10,8 +10,6 @@ using Microsoft.CSharp.RuntimeBinder;
 namespace Custom.InputAccel.UimScript
 {
     using Emc.InputAccel.UimScript;
-    using Emc.InputAccel.CaptureClient;
-    using System.Windows.Forms;
     using System.IO;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
@@ -27,14 +25,15 @@ namespace Custom.InputAccel.UimScript
     public class ScriptIris : UimScriptDocument
     {
         public static string MDDurl = "http://magellandd:8110/restapi/rest";
-        
 
+        
         /// <summary>
         /// Executes when the Document is first loaded for the task by the Completion module, 
         /// after all of the runtime setup is complete.
         /// </summary>
         /// <param name="dataContext">The context object for the document.</param>
         /// 
+       
         public string GetDT(string DocumentType)
         {
             //Create a string to save the Decision Tree ID
@@ -75,7 +74,6 @@ namespace Custom.InputAccel.UimScript
                                             {
                                                 //Get the ID
                                                 TreeID = y.id;
-
                                             }
 
                                         }
@@ -118,6 +116,7 @@ namespace Custom.InputAccel.UimScript
         {
             //First of all, get the documenttype name
             string DocType = dataContext.DocumentName;
+            dataContext.FindFieldDataContext("PredictedClass").SetValue("Gareth");
             //Now get the Decision Tree back
             string StrDecisionTree = GetDT(DocType);
             //Load the decision tree nodes
@@ -263,7 +262,6 @@ namespace Custom.InputAccel.UimScript
         }
         public void DocumentLoad(IUimDataContext dataContext)
         {
-            GetDecision(dataContext);
            
         }
 
@@ -282,7 +280,6 @@ namespace Custom.InputAccel.UimScript
         public void ExecutePopulationRuleMagellanDDDT(IUimDataContext dataContext)
         {
             GetDecision(dataContext);
-
         }
 
         /// <summary>
@@ -291,8 +288,9 @@ namespace Custom.InputAccel.UimScript
         /// <param name="dataContext">The context object for the document.</param>
         public void ExecuteValidationRule<rulename>(IUimDataContext dataContext)
         {
-        }
 
+        }
+        
         /// <summary>
         /// Executes when the data entry form is loaded.
         /// </summary>
