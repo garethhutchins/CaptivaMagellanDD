@@ -13,6 +13,7 @@ namespace Custom.InputAccel.UimScript
     using System.IO;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
+    using Emc.InputAccel.CaptureClient;
 
     public sealed class ScriptMain : UimScriptMainCore
     {
@@ -22,6 +23,51 @@ namespace Custom.InputAccel.UimScript
     /// The custom script class for the document type 
     /// <Document Type Name as defined in Captiva Designer>.
     ///</summary>
+    ///
+    public class ScriptGroceries : UimScriptDocument
+    {
+        public void DocumentLoad(IUimDataContext dataContext)
+        {
+
+        }
+
+        /// <summary>
+        /// Executes when the Document is first loaded for the task by the Extraction 
+        /// module, after all of the runtime setup is complete.
+        ///</summary>
+        /// <param name="dataContext">The context object for the document.</param>
+        public void DocumentUnload(IUimDataContext dataContext)
+        {
+        }
+        public void ExecutePopulationRuleMagellanDDAR(IUimDataContext dataContext)
+        {
+            //Call the TME Engine
+            UseMagellan CF = new UseMagellan();
+            CF.CallMagellan(dataContext);
+        }
+        public void ExecutePopulationRuleGetRecomendations(IUimDataContext dataContext)
+        {
+            //Execute the DB Lookup
+            Dictionary<string, object> EmptyDict = new Dictionary<string, object>();
+            ITableResults res = dataContext.LookupData("GetRecomendations", EmptyDict);
+            //Now loop through all of the results
+            //See if each row contains has of the values in the purchased field by splitting them up
+            //If they do then it's a match
+            string PGoods = dataContext.FindFieldDataContext("PurchasedGroceries").Text;
+            PGoods = PGoods.Replace(System.Environment.NewLine, "|");
+            char[] c = "|".ToCharArray();
+            string[] Purchased = PGoods.Split(c[0]);
+            //Now loop through the rows
+            for (int i = 0; i < res.RowCount; i++)
+            {
+                //Get the values from the row
+                ITableRow TR = res.ElementAt(i);
+                string PG = TR.AsString(0);
+                string RG = TR.AsString(1);
+                //Next split each into an array and see if they are in the purchased goods field
+            }
+        }
+    }
     public class ScriptIris : UimScriptDocument
     {
         public static string MDDurl = "http://magellandd:8110/restapi/rest";
