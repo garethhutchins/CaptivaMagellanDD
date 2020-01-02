@@ -14,6 +14,8 @@ namespace Custom.InputAccel.UimScript
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
     using Emc.InputAccel.CaptureClient;
+    using System.Text.RegularExpressions;
+    using System.Globalization;
 
     public sealed class ScriptMain : UimScriptMainCore
     {
@@ -55,17 +57,62 @@ namespace Custom.InputAccel.UimScript
             //If they do then it's a match
             string PGoods = dataContext.FindFieldDataContext("PurchasedGroceries").Text;
             PGoods = PGoods.Replace(System.Environment.NewLine, "|");
+            //Changed the extracted item to lowercase to match the DB
+            PGoods = PGoods.ToLower();
             char[] c = "|".ToCharArray();
             string[] Purchased = PGoods.Split(c[0]);
+            List<String> RecomendList = new List<string>();
             //Now loop through the rows
             for (int i = 0; i < res.RowCount; i++)
             {
                 //Get the values from the row
                 ITableRow TR = res.ElementAt(i);
                 string PG = TR.AsString(0);
+                PG = PG.Replace(@"""", "");
                 string RG = TR.AsString(1);
+                RG = RG.Replace(@"""", "");
                 //Next split each into an array and see if they are in the purchased goods field
+                char[] c2 = ",".ToCharArray();
+                //Convert PG to Lowercase
+                PG = PG.ToLower();
+                string[] RowPurchased = PG.Split(c2[0]);
+                string[] Recomended = RG.Split(c2[0]);
+                Boolean inList = true;
+                foreach(var item in RowPurchased)
+                {
+                    if (!Purchased.Contains(item))
+                    {
+                        inList = false;
+                    }
+                }
+                //Now see if the values were extracted for that table
+                if (inList)
+                {
+                    foreach(var item in Recomended)
+                    {
+                        if(!RecomendList.Contains(item) && !Purchased.Contains(item))
+                        {
+                            RecomendList.Add(item);
+                        }
+                    }
+                }
             }
+            //Now convert the list to string
+            string OutValue = "";
+            TextInfo ti = CultureInfo.CurrentCulture.TextInfo;
+            foreach (string val in RecomendList)
+            {
+                if(OutValue == "")
+                {
+                    OutValue = ti.ToTitleCase(val);
+                }
+                else
+                {
+                    OutValue = OutValue + System.Environment.NewLine + ti.ToTitleCase(val);
+                }
+            }
+            //Now Send the Value back to the fiels
+            dataContext.FindFieldDataContext("RecomendedGroceries").SetValue(OutValue);
         }
     }
     public class ScriptIris : UimScriptDocument
@@ -162,7 +209,6 @@ namespace Custom.InputAccel.UimScript
         {
             //First of all, get the documenttype name
             string DocType = dataContext.DocumentName;
-            dataContext.FindFieldDataContext("PredictedClass").SetValue("Gareth");
             //Now get the Decision Tree back
             string StrDecisionTree = GetDT(DocType);
             //Load the decision tree nodes
