@@ -31,6 +31,8 @@ namespace Custom.InputAccel.UimScript
                 Regex rgx = new Regex(xml10pattern);
                 string ROCRFT = rgx.Replace(OCRFT, "");
                 ROCRFT = xmlEscapeText(ROCRFT);
+                //Need to remove ?
+                ROCRFT = ROCRFT.Replace("?", "");
                 //Save this back as a string for TME tesing purposes
                 dataContext.FindFieldDataContext("PurchasedGroceries").SetValue(ROCRFT);
                 //first build the first part of the XML
