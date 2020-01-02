@@ -47,11 +47,11 @@ namespace Custom.InputAccel.UimScript
             UseMagellan CF = new UseMagellan();
             CF.CallMagellan(dataContext);
         }
-        public void ExecutePopulationRuleGetRecomendations(IUimDataContext dataContext)
+        public void ExecutePopulationRuleGetRecommendations(IUimDataContext dataContext)
         {
             //Execute the DB Lookup
             Dictionary<string, object> EmptyDict = new Dictionary<string, object>();
-            ITableResults res = dataContext.LookupData("GetRecomendations", EmptyDict);
+            ITableResults res = dataContext.LookupData("GetRecommendations", EmptyDict);
             //Now loop through all of the results
             //See if each row contains has of the values in the purchased field by splitting them up
             //If they do then it's a match
@@ -112,7 +112,7 @@ namespace Custom.InputAccel.UimScript
                 }
             }
             //Now Send the Value back to the fiels
-            dataContext.FindFieldDataContext("RecomendedGroceries").SetValue(OutValue);
+            dataContext.FindFieldDataContext("RecommendedGroceries").SetValue(OutValue);
         }
     }
     public class ScriptIris : UimScriptDocument
