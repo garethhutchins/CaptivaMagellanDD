@@ -106,8 +106,12 @@ namespace Custom.InputAccel.UimScript
                         }
                     }
                 }
-                //Set the Value
-                dataContext.FindFieldDataContext("PurchasedGroceries").SetValue(prodcuts);
+                //Set the Value if not blank
+                if (prodcuts!="")
+                {
+                    dataContext.FindFieldDataContext("PurchasedGroceries").SetValue(prodcuts);
+                }
+                
                 
             }
         }
