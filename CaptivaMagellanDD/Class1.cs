@@ -163,10 +163,32 @@ namespace Custom.InputAccel.UimScript
                                     {
                                         foreach (var y in x)
                                         {
-                                            if (y.name == DocumentType)
+                                            try {
+                                                if (y.name == DocumentType)
+                                                {
+                                                    //Get the ID
+                                                    TreeID = y.id;
+                                                }
+                                            }
+                                            catch (RuntimeBinderException)
                                             {
-                                                //Get the ID
-                                                TreeID = y.id;
+                                                //If it get here then there could be an array returned
+                                                foreach(var w in y)
+                                                {
+                                                    try
+                                                    {
+                                                        if (w.name == DocumentType)
+                                                        {
+                                                            //Get the ID
+                                                            TreeID = w.id;
+                                                        }
+                                                    }
+                                                    catch (RuntimeBinderException)
+                                                    {
+
+                                                    }
+                                                }
+
                                             }
 
                                         }
